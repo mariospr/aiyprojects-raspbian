@@ -17,6 +17,7 @@
 import datetime
 import logging
 import subprocess
+import os
 
 import actionbase
 
@@ -198,6 +199,16 @@ class RepeatAfterMe(object):
 # Makers! Implement your own actions here.
 # =========================================
 
+class ExecuteCommand(object):
+    def __init__(self, say, command, message):
+        self.say = say
+        self.command = command
+        self.message = message
+
+    def run(self, voice_command):
+        self.say(self.message)
+        os.system(self.command)
+
 
 def make_actor(say):
     """Create an actor to carry out the user's commands."""
@@ -219,6 +230,11 @@ def make_actor(say):
     # =========================================
     # Makers! Add your own voice commands here.
     # =========================================
+
+    # The 'shut down' and 'reboot' actions need to be appropiately
+    # configured at the PolKit level (permissions) to work.
+    actor.add_keyword(_('shut down'), ExecuteCommand(say, 'poweroff', 'Shutting down.'))
+    actor.add_keyword(_('reboot'), ExecuteCommand(say, 'reboot', 'Rebooting'))
 
     return actor
 
